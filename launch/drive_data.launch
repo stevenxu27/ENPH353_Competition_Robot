@@ -1,0 +1,9 @@
+<launch>
+
+   <node pkg="controller"
+         type="drive_data_collector.py"
+         name="drive_data_node"
+         output="screen">
+   </node>
+
+</launch>

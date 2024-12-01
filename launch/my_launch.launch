@@ -8,8 +8,8 @@
    </node> -->
 
    <node pkg="controller"
-         type="drive_data_collector.py"
-         name="drive_data_node"
+         type="drive_test.py"
+         name="drive_test"
          output="screen">
    </node>
 
