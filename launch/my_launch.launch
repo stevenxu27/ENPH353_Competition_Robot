@@ -1,9 +1,15 @@
 <launch>
 
       <!-- My Package launch file -->
-   <node pkg="controller"
+   <!-- <node pkg="controller"
          type="controller_node.py"
          name="controller_node" 
+         output="screen">
+   </node> -->
+
+   <node pkg="controller"
+         type="drive_test.py"
+         name="drive_test"
          output="screen">
    </node>
 
