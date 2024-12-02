@@ -21,7 +21,7 @@ def image_callback(msg):
     image = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
     # Resize or preprocess the image to match the model's input size
-    resized_image = cv2.resize(image, (128, 128))  # Ensure it matches the model's input
+    resized_image = cv2.resize(image, (224, 224))  # Ensure it matches the model's input
     normalized_image = resized_image / 255.0  # Normalize pixel values to [0, 1]
 
     # Expand dimensions to match model input shape: (1, 128, 128, 3)

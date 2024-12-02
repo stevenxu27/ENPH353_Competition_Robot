@@ -26,7 +26,7 @@ def image_callback(msg):
         original_image = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
         # Resize the image to 128x128
-        latest_image = cv2.resize(original_image, (128, 128))
+        latest_image = cv2.resize(original_image, (224, 224))
     except Exception as e:
         rospy.logerr(f"Failed to process image: {e}")
         latest_image = None
