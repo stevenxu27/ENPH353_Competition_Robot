@@ -49,7 +49,7 @@ def main():
 
     rospy.loginfo("Data collection node started. Press Ctrl+C to stop.")
 
-    rate = rospy.Rate(2)
+    rate = rospy.Rate(10)
 
     # Keep the node running
     try:
@@ -81,7 +81,7 @@ def save_data():
     global data
 
     # Define paths
-    output_dir = '/home/fizzer/ros_ws/src/controller/drive_data_output/'
+    output_dir = '/home/fizzer/ros_ws/src/controller/train/drive_data_output'
     csv_path = os.path.join(output_dir, 'velocity_data.csv')
 
     # Find the highest image index in the output folder
