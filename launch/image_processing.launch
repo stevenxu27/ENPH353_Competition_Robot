@@ -1,0 +1,10 @@
+<launch>
+
+
+   <node pkg="controller"
+         type="SIFT_homography.py"
+         name="SIFT_homography"
+         output="screen">
+   </node>
+
+</launch>
