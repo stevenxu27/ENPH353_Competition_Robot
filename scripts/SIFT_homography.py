@@ -71,6 +71,36 @@ class Sign_Detection():
             # Find the homography matrix
             matrix, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
 
+            if matrix is None:
+                rospy.logwarn("Homography computation failed")
+                return
+
+            # Validate the homography matrix
+            determinant = np.linalg.det(matrix)
+            rospy.loginfo(f"Homography matrix determinant: {determinant:.4f}")
+
+            if determinant < 0.1:
+                rospy.logwarn("Homography matrix has a very small determinant, likely invalid")
+                return
+
+            # Reprojection error
+            # Filter source and destination points based on the mask
+            inlier_src_pts = src_pts[mask.ravel() == 1]
+            inlier_dst_pts = dst_pts[mask.ravel() == 1]
+
+            # Transform the filtered source points
+            transformed_src_pts = cv2.perspectiveTransform(inlier_src_pts, matrix)
+
+            # Compute reprojection error
+            reprojection_error = np.mean(
+                np.linalg.norm(inlier_dst_pts - transformed_src_pts, axis=2)
+            )
+            rospy.loginfo(f"Reprojection Error: {reprojection_error:.4f}")
+
+            if reprojection_error > 5:  # Threshold depends on application and image resolution
+                rospy.logwarn("High reprojection error, homography might be inaccurate")
+                return
+
             # Get the corners of the template image
             h, w = self.template_image.shape[:2]
             pts = np.float32([[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0]]).reshape(-1, 1, 2)
