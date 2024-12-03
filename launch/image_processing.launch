@@ -7,4 +7,9 @@
          output="screen">
    </node>
 
+   <node pkg="controller"
+         type="image_processing.py"
+         name="image_processing"
+         output="screen">
+   </node>
 </launch>

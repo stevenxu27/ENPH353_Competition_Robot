@@ -20,6 +20,10 @@ class Sign_Detection():
         # Load the template image
         self.template_image = cv2.imread('/home/fizzer/ros_ws/src/controller/images/clue_banner.png')
 
+        self.result_pub = rospy.Publisher('/homography_result', Image, queue_size=10)
+
+        time.sleep(1)
+
         # Check if template image is loaded
         if self.template_image is None:
             rospy.logerr("Failed to load template image.")
@@ -58,6 +62,8 @@ class Sign_Detection():
         good_matches = [m for m, n in matches if m.distance < 0.6 * n.distance]
 
         if len(good_matches) >= 4:
+
+            rospy.loginfo("Enough points were detected for good image")
             # Extract matching points
             src_pts = np.float32([kp_template[m.queryIdx].pt for m in good_matches]).reshape(-1, 1, 2)
             dst_pts = np.float32([kp_frame[m.trainIdx].pt for m in good_matches]).reshape(-1, 1, 2)
@@ -75,8 +81,27 @@ class Sign_Detection():
             # Draw the homography polygon on the frame
             homography = cv2.polylines(frame, [np.int32(dst)], True, (255, 0, 0), 3)
 
+
+            # PUBLISH CROPPED IMAGE
+
+            # Draw the homography polygon on the frame (for visualization)
+            cv2.polylines(frame, [np.int32(dst)], True, (255, 0, 0), 3)
+
+            # Warp the frame to extract the region inside the homography box
+            warp_matrix = cv2.getPerspectiveTransform(dst.reshape(-1, 2), pts.reshape(-1, 2))
+            warped_image = cv2.warpPerspective(frame, warp_matrix, (w, h))
+
+
+            # Publish the cropped region
+            try:
+                cropped_image_msg = self.bridge.cv2_to_imgmsg(warped_image, encoding="bgr8")
+                self.result_pub.publish(cropped_image_msg)
+                rospy.loginfo("Published homography ROI")
+            except CvBridgeError as e:
+                rospy.logerr(f"Failed to publish ROI: {e}")
+
             # Show the frame with the homography
-            cv2.imshow("Homography", homography)
+            cv2.imshow("Homography", warped_image)
 
         else:
             rospy.logwarn("Not enough good matches found to compute homography")
