@@ -81,7 +81,6 @@ class Sign_Detection():
             # Draw the homography polygon on the frame
             homography = cv2.polylines(frame, [np.int32(dst)], True, (255, 0, 0), 3)
 
-
             # PUBLISH CROPPED IMAGE
 
             # Draw the homography polygon on the frame (for visualization)
@@ -90,7 +89,6 @@ class Sign_Detection():
             # Warp the frame to extract the region inside the homography box
             warp_matrix = cv2.getPerspectiveTransform(dst.reshape(-1, 2), pts.reshape(-1, 2))
             warped_image = cv2.warpPerspective(frame, warp_matrix, (w, h))
-
 
             # Publish the cropped region
             try:
