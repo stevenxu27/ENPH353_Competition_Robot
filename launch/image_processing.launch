@@ -1,0 +1,15 @@
+<launch>
+
+
+   <node pkg="controller"
+         type="SIFT_homography.py"
+         name="SIFT_homography"
+         output="screen">
+   </node>
+
+   <node pkg="controller"
+         type="image_processing.py"
+         name="image_processing"
+         output="screen">
+   </node>
+</launch>
