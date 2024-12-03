@@ -1,2 +1,4 @@
 train/drive_data_output/
 train/drive_data_output_128/
+train/drive_data_output_224/
+train/drive_data_output_3Hz/
