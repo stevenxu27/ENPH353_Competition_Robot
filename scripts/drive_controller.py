@@ -67,12 +67,11 @@ def main():
     rospy.init_node('drive_controller')
     time.sleep(1)
 
-
     # Move to first board
-    move_command(3, 0, 0.35, 3)
+    move_command(3, 0, 0.35, 4)
 
     # Move to second board
-    move_command(10, 0, 0.8, 0.5)
+    move_command(10, 0, 0.83, 0.5)
     move_command(0, -1.5, 0.7, 3)
     move_command(0, 1.5, 0.7, 0.5)
 
@@ -82,7 +81,7 @@ def main():
     move_command(3, 0, 0.5, 0.5)
     move_command(0, -2, 0.9, 0.5)
     move_command(3, 0, 0.7, 0.5)
-    move_command(0, 2, 0.8, 3)
+    move_command(0, 2, 0.8, 4)
 
     position = [0.55, -0.1, 0.5, 0.0, 0.0, 1.0, 1.0]  # Spawn at origin with no rotation
 
@@ -90,26 +89,41 @@ def main():
 
     time.sleep(1)
 
-    move_command(-3, 0, 0.85, 2)
-    move_command(0, -1, 1, 4)
-    move_command(0, 1, 1, 2)
+    move_command(-3, 0, 0.8, 2)
+    move_command(0, -1, 1.5, 2)
 
     time.sleep(1)
 
-    move_command(3, 0, 2.75, 1)
-    move_command(0, -3, 1.8, 3)
-    move_command(0, -2, 0.5, 1)
-    # move_command(1, 0, 1.7, 1)
+    move_command(0, 1, 1.75, 1)
 
     time.sleep(1)
 
-    # move_command(0, -2, 2, 1)
-    # move_command(2, 1, 1, 1)
-    # move_command(2, -1, 1, 1)
-    # move_command(2, 0.5, 1, 1)
-    # move_command(2, -0.5, 1, 1)
-    # move_command(2, 0.5, 1, 1)
-    # move_command(2, -0.5, 1, 1)
+    move_command(3, 0, 2.75, 2)
+    move_command(0, -3, 2, 3)
+
+    time.sleep(1)
+
+    position = [-3.8, 0.45, 0.52, 0.0, 1.0, 0.0, 1.0]  # Spawn at origin with no rotation
+
+    spawn_position(position)  # Spawn at origin with no rotation)
+
+    time.sleep(1)
+
+    move_command(0, 2, 1, 1)
+    move_command(2, 0, 1.75, 2)
+    move_command(0, 2, 1.5, 5)
+
+    position = [-4.1, -2.25, 0.52, 0.0, 0.0, 1.0, 1.0]  # Spawn at origin with no rotation
+
+    spawn_position(position)  # Spawn at origin with no rotation)
+
+    time.sleep(1)
+
+    move_command(1, 0, 0.7, 2)
+    move_command(0, -2, 1.9, 4)
+    move_command(0, -2, 1.9, 2)
+    move_command(1, 0, 0.8, 2)
+    move_command(0, 2, 1.9, 2)
 
 
 if __name__ == "__main__":

@@ -62,7 +62,7 @@ class Sign_Detection():
         # Filter good matches using Lowe's ratio test
         good_matches = [m for m, n in matches if m.distance < 0.6 * n.distance]
 
-        if len(good_matches) >= 4:
+        if len(good_matches) >= 10:
 
             # rospy.loginfo("Enough points were detected for good image")
             # Extract matching points
