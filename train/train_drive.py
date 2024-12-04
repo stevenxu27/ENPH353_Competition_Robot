@@ -27,13 +27,13 @@ def create_new_model():
         layers.Conv2D(128, (3, 3), activation='relu'),
         layers.MaxPooling2D((2, 2)),
 
-        # Fourth block
-        layers.Conv2D(256, (3, 3), activation='relu'),
-        layers.MaxPooling2D((2, 2)),
+        # # Fourth block
+        # layers.Conv2D(256, (3, 3), activation='relu'),
+        # layers.MaxPooling2D((2, 2)),
 
         # Global Average Pooling
         layers.GlobalAveragePooling2D(),
-        layers.Dropout(0.4),
+        layers.Dropout(0.5),
 
         # Fully Connected Layers
         layers.Dense(128, activation='relu'),  # Increased size
@@ -102,7 +102,7 @@ for start_idx in range(0, len(data), batch_size):
 X = np.array(X, dtype="float32")
 y = np.array(y, dtype="float32")
 
-reduce_size = 3
+reduce_size = 1
 
 X = X[: X.shape[0] // reduce_size, :, :, :]
 y = y[: y.shape[0] // reduce_size, :]
@@ -130,7 +130,7 @@ early_stopping = EarlyStopping(
 history = model.fit(
     X, y,
     validation_split=0.2,
-    epochs=150,
+    epochs=300,
     batch_size=16,
     verbose=1,
     callbacks=[early_stopping]
