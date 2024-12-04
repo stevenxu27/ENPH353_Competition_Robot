@@ -11,12 +11,12 @@ from std_msgs.msg import String
 
 from tensorflow.keras.models import load_model
 
-model_path = "/home/fizzer/ros_ws/src/controller/models/no_spaces_model.h5"
+model_path = "/home/fizzer/ros_ws/src/controller/models/test_model.h5"
 model = load_model(model_path)
 
 # Define the image size you want to slice
 image_height, image_width = 400, 600
-slice_height, slice_width = 100, 50  # Example: 40x40 slices for each letter
+slice_height, slice_width = 100, 45  # Example: 40x40 slices for each letter
 
 
 classes = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 '  # String of values
@@ -45,19 +45,23 @@ def predict_letter(roi):
 
 def slice_image(image):
     # Slice the image into 4 sections (adjust these coordinates as needed)
-    first_character = image[250:350, 25:75]
-    second_character = image[250:350, 75:125]
-    third_character = image[250:350, 120:170]
-    fourth_character = image[250:350, 170:220]
-    fifth_character = image[250:350, 215:265]
-    sixth_character = image[250:350, 265:315]
-    seventh_character = image[250:350, 320:370]
-    eigth_character = image[250:350, 375:425]
-    ninth_character = image[250:350, 425:475]
-
-    return first_character, second_character, third_character, fourth_character, fifth_character, sixth_character, seventh_character, eigth_character, ninth_character
+    first_character = image[250:350, 30:75]
+    second_character = image[250:350, 75:120]
+    third_character = image[250:350, 120:165]
+    fourth_character = image[250:350, 165:210]
+    fifth_character = image[250:350, 210:255]
+    sixth_character = image[250:350, 255:300]
+    seventh_character = image[250:350, 300:345]
+    eigth_character = image[250:350, 345:390]
+    ninth_character = image[250:350, 390:435]
+    tenth_character = image[250:350, 435:480]
+    eleventh_character = image[250:350, 480:525]
+    twelvth_character = image[250:350, 525:570]
+    return first_character, second_character, third_character, fourth_character, fifth_character, sixth_character, seventh_character, eigth_character, ninth_character, tenth_character, eleventh_character, twelvth_character
 
 def image_callback(msg):
+
+    global counter  # Declare counter as global to modify it
     bridge = CvBridge()
     try:
         # Convert ROS Image message to OpenCV format
@@ -71,12 +75,12 @@ def image_callback(msg):
         
         # cv2.imshow("Received Homography", cv_image[250:350, 25:75])
 
-        first, second, third, fourth, fifth, sixth, seventh, eighth, ninth = slice_image(cv_image)
+        first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth, eleventh, twelvth = slice_image(cv_image)
 
         score_pub = rospy.Publisher('/score_tracker', String)
 
         message = ''
-        for i, character in enumerate([first, second, third, fourth, fifth]):
+        for i, character in enumerate([first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth, eleventh, twelvth]):
             rospy.loginfo(f"OpenCV image shape: {character.shape}")
             cv2.imshow('Test character', character)
             predicted_class = predict_letter(character)
