@@ -21,10 +21,11 @@ def image_callback(msg):
     image = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
     # Resize or preprocess the image to match the model's input size
-    resized_image = cv2.resize(image, (128, 128))  # Ensure it matches the model's input
+    resized_image = cv2.resize(image, (224, 224))  # Ensure it matches the model's input
+    resized_image = resized_image[56 :, :, :] # Import 3/4 to model
     normalized_image = resized_image / 255.0  # Normalize pixel values to [0, 1]
-
-    # Expand dimensions to match model input shape: (1, 128, 128, 3)
+    
+    # Expand dimensions to match model input shape
     input_data = np.expand_dims(normalized_image, axis=0)
 
     # Compute linear and angular velocities
@@ -40,8 +41,6 @@ def main():
     rospy.init_node('drive_test')
 
     rospy.Subscriber('/B1/rrbot/camera1/image_raw', Image, image_callback)
-
-    rospy.sleep(1)
 
     rate = rospy.Rate(30)
 

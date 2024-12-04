@@ -7,9 +7,17 @@
          output="screen">
    </node> -->
 
-   <node pkg="controller"
+   <!-- <node pkg="controller"
          type="drive_test.py"
          name="drive_test"
+         output="screen">
+   </node> -->
+
+   <param name="use_sim_time" value="true"/>
+
+   <node pkg="controller"
+         type="drive_controller.py"
+         name="drive_controller"
          output="screen">
    </node>
 

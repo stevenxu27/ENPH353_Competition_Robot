@@ -23,10 +23,10 @@ def image_callback(msg):
     global latest_image
     try:
         # Convert the ROS Image message to OpenCV format
-        original_image = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+        latest_image = bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
         # Resize the image to 128x128
-        latest_image = cv2.resize(original_image, (128, 128))
+        # latest_image = cv2.resize(original_image, (400, 400))
     except Exception as e:
         rospy.logerr(f"Failed to process image: {e}")
         latest_image = None
@@ -49,7 +49,7 @@ def main():
 
     rospy.loginfo("Data collection node started. Press Ctrl+C to stop.")
 
-    rate = rospy.Rate(2)
+    rate = rospy.Rate(10) # Data collection rate
 
     # Keep the node running
     try:
@@ -81,7 +81,7 @@ def save_data():
     global data
 
     # Define paths
-    output_dir = '/home/fizzer/ros_ws/src/controller/drive_data_output/'
+    output_dir = '/home/fizzer/ros_ws/src/controller/train/drive_data_output'
     csv_path = os.path.join(output_dir, 'velocity_data.csv')
 
     # Find the highest image index in the output folder
@@ -93,6 +93,14 @@ def save_data():
 
     # Start saving new data from the next available index
     start_index = max_index + 1
+
+    # Exclude the first 3 and last 3 images
+    cutout_frames = 10
+    if len(data) > 2 * cutout_frames:
+        data = data[cutout_frames:-1 * cutout_frames]  # Slice out the first and last 3 items
+    else:
+        print("Not enough data to exclude the first and last 3 images.")
+        return
 
     # Save images and velocity data
     for idx, (image, linear_vel, angular_vel) in enumerate(data):
