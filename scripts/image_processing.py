@@ -10,7 +10,7 @@ import numpy as np
 from std_msgs.msg import String
 from tensorflow.keras.models import load_model
 
-model_path = "/home/fizzer/ros_ws/src/controller/models/working_model.h5"
+model_path = "/home/fizzer/ros_ws/src/controller/models/test_model.h5"
 model = load_model(model_path)
 
 # Define the image size you want to slice
