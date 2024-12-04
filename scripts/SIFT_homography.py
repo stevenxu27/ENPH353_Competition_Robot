@@ -51,6 +51,7 @@ class Sign_Detection():
     def process_frame(self, frame):
         # Detect keypoints and descriptors in both the template and current frame using SIFT
         sift = cv2.SIFT_create()
+
         kp_template, desc_template = sift.detectAndCompute(self.template_gray, None)
         kp_frame, desc_frame = sift.detectAndCompute(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), None)
 
@@ -63,13 +64,43 @@ class Sign_Detection():
 
         if len(good_matches) >= 4:
 
-            rospy.loginfo("Enough points were detected for good image")
+            # rospy.loginfo("Enough points were detected for good image")
             # Extract matching points
             src_pts = np.float32([kp_template[m.queryIdx].pt for m in good_matches]).reshape(-1, 1, 2)
             dst_pts = np.float32([kp_frame[m.trainIdx].pt for m in good_matches]).reshape(-1, 1, 2)
 
             # Find the homography matrix
             matrix, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
+
+            if matrix is None:
+                rospy.logwarn("Homography computation failed")
+                return
+
+            # Validate the homography matrix
+            determinant = np.linalg.det(matrix)
+            # rospy.loginfo(f"Homography matrix determinant: {determinant:.4f}")
+
+            if determinant < 0.1:
+                rospy.logwarn("Homography matrix has a very small determinant, likely invalid")
+                return
+
+            # Reprojection error
+            # Filter source and destination points based on the mask
+            inlier_src_pts = src_pts[mask.ravel() == 1]
+            inlier_dst_pts = dst_pts[mask.ravel() == 1]
+
+            # Transform the filtered source points
+            transformed_src_pts = cv2.perspectiveTransform(inlier_src_pts, matrix)
+
+            # Compute reprojection error
+            reprojection_error = np.mean(
+                np.linalg.norm(inlier_dst_pts - transformed_src_pts, axis=2)
+            )
+            # rospy.loginfo(f"Reprojection Error: {reprojection_error:.4f}")
+
+            if reprojection_error > 5:  # Threshold depends on application and image resolution
+                rospy.logwarn("High reprojection error, homography might be inaccurate")
+                return
 
             # Get the corners of the template image
             h, w = self.template_image.shape[:2]
@@ -90,11 +121,25 @@ class Sign_Detection():
             warp_matrix = cv2.getPerspectiveTransform(dst.reshape(-1, 2), pts.reshape(-1, 2))
             warped_image = cv2.warpPerspective(frame, warp_matrix, (w, h))
 
+            # hsv_image = cv2.cvtColor(warped_image, cv2.COLOR_BGR2HSV)
+
+            # # Define the range for the color blue in HSV space
+            # # You may need to adjust these values depending on the shade of blue in your image
+            # lower_blue = np.array([100, 150, 150])  # Lower bound of blue color in HSV
+            # upper_blue = np.array([140, 255, 255])  # Upper bound of blue color in HSV
+
+            # # Create a mask for the blue color in the image
+            # mask = cv2.inRange(hsv_image, lower_blue, upper_blue)
+            # mask_inverted = cv2.bitwise_not(mask)
+
+            # # Use the mask to extract the contents inside the blue box
+            # warped_image = cv2.bitwise_and(warped_image, warped_image, mask=mask_inverted)
+
             # Publish the cropped region
             try:
                 cropped_image_msg = self.bridge.cv2_to_imgmsg(warped_image, encoding="bgr8")
                 self.result_pub.publish(cropped_image_msg)
-                rospy.loginfo("Published homography ROI")
+                # rospy.loginfo("Published homography ROI")
             except CvBridgeError as e:
                 rospy.logerr(f"Failed to publish ROI: {e}")
 
