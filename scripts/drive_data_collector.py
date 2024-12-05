@@ -49,7 +49,7 @@ def main():
 
     rospy.loginfo("Data collection node started. Press Ctrl+C to stop.")
 
-    rate = rospy.Rate(10) # Data collection rate
+    rate = rospy.Rate(5) # Data collection rate
 
     # Keep the node running
     try:
@@ -57,8 +57,8 @@ def main():
             if latest_image is not None and latest_velocity is not None:
                 # Save the image and velocity data
                 image_array = latest_image.copy()
-                linear_vel = latest_velocity.linear.x
-                angular_vel = latest_velocity.angular.z
+                linear_vel = int(bool(latest_velocity.linear.x))
+                angular_vel = int(bool(latest_velocity.angular.z))
 
                 data.append((image_array, linear_vel, angular_vel))
 

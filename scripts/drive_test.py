@@ -32,9 +32,15 @@ def image_callback(msg):
     prediction = model.predict(input_data)
     linear_vel, angular_vel = prediction[0]
 
-    move.linear.x = linear_vel
-    move.angular.z = angular_vel
+    # Only publish the higher velocity in its respective field
+    if abs(linear_vel) > abs(angular_vel):
+        move.linear.x = 1
+        move.angular.z = 0.0
+    else:
+        move.linear.x = 0.0
+        move.angular.z = 1
 
+    # Publish the velocity message
     vel_pub.publish(move)
 
 def main():
