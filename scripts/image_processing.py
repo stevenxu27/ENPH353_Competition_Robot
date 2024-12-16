@@ -77,10 +77,10 @@ def find_clue(message):
 
     return clue_map.get(message, '100')
 
-def is_between_0_and_6(s):
+def is_between_0_and_8(s):
     if s.isdigit():  # Check if the string is numeric
         number = int(s)  # Convert to an integer
-        return 0 <= number <= 6  # Check if it's in the range
+        return 0 <= number <= 8  # Check if it's in the range
     return False  # Return False if not numeric
 
 def image_callback(msg):
@@ -119,7 +119,7 @@ def image_callback(msg):
 
         clue = clue.replace(" ", "")
         
-        if (is_between_0_and_6(find_clue(clue))):
+        if (is_between_0_and_8(find_clue(clue))):
             start_message = f"{team_name},{password},{find_clue(clue)}, {message}"
             score_pub.publish(start_message)
         rospy.loginfo(f"Clue: {clue}")
