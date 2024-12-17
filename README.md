@@ -54,7 +54,9 @@ To view the simulation from the robot's camera feed:
 rosrun rqt_image_view rqt_image_view
 
 ```
+### Competition Repository
 
+The Competition repository and setup can be found here: https://github.com/stevenxu27/ENPH353_Competition_5
 
 ### Branches
 
